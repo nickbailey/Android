@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tell the Time</string>
+    <string name="time_asked">A Quarter past 1</string>
+    <string name="status">Game\nstarting</string>
+    <string name="enter">Check!</string>
+    <string name="menu_settings">Settings</string>
+
+</resources>

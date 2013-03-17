@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <org.nism.tellthetime.Scoreboard
+        android:id="@+id/scoreboard"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="0" />
+    
+    <org.nism.tellthetime.AnalogClockFace
+        android:id="@+id/clock_face"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="40" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="280dp"
+            android:layout_height="80dp"
+            android:text="@string/time_asked"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="32sp" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/enter" />
+
+        <TextView
+            android:id="@+id/editText1"
+            android:layout_width="fill_parent"
+            android:layout_height="80dp"
+            android:text="@string/status"
+            android:textIsSelectable="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="20sp" />
+        
+    </LinearLayout>
+
+</LinearLayout>

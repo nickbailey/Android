@@ -38,14 +38,12 @@ public class AnalogClockFace extends View {
 
     private enum State { idle, adjusting_hours, adjusting_minutes };
 	
-    private Time mCalendar;
-
     private Drawable mHourHand;
     private Drawable mHourHandSelected;
     private Drawable mMinuteHand;
     private Drawable mMinuteHandSelected;
     private Drawable mDial;
-
+//thungy
     private int mDialWidth;
     private int mDialHeight;
 
@@ -78,7 +76,7 @@ public class AnalogClockFace extends View {
         mMinuteHand = r.getDrawable(org.nism.tellthetime.R.drawable.clock_hand_minute);
         mMinuteHandSelected = r.getDrawable(org.nism.tellthetime.R.drawable.clock_hand_minute_glowing);
 
-        mCalendar = new Time();
+        //mCalendar = new Time();
 
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
@@ -94,7 +92,7 @@ public class AnalogClockFace extends View {
         // in the main thread, therefore the receiver can't run before this method returns.
 
         // The time zone may have changed while the receiver wasn't registered, so update the Time
-        mCalendar = new Time();
+        //mCalendar = new Time();
 
         // Make sure we update to the current time
         onTimeChanged();

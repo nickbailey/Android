@@ -2,12 +2,14 @@ package org.nism.tellthetime;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.res.XmlResourceParser;
 import android.view.Menu;
 import org.nism.tellthetime.AnalogClockFace;
 
 public class MainActivity extends Activity {
 
 	private AnalogClockFace acf;
+	private Game game;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,9 @@ public class MainActivity extends Activity {
     public void onStart() {
     	super.onStart();
         acf = (AnalogClockFace) findViewById(org.nism.tellthetime.R.id.clock_face);
-    	acf.mQuantum = 15;
+    	acf.mQuantum = 10;
+    	
+        XmlResourceParser xml = this.getResources().getXml(org.nism.tellthetime.R.xml.gamespec);
+        Game g = new Game(xml);
     }
 }

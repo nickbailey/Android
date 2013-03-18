@@ -34,7 +34,7 @@ import android.view.MotionEvent;
  */
 @RemoteView
 public class AnalogClockFace extends View {
-    public  int     mQuantum = 1;
+    public  int     mQuantum = 10;
 
     private enum State { idle, adjusting_hours, adjusting_minutes };
 	
@@ -43,7 +43,7 @@ public class AnalogClockFace extends View {
     private Drawable mMinuteHand;
     private Drawable mMinuteHandSelected;
     private Drawable mDial;
-//thungy
+
     private int mDialWidth;
     private int mDialHeight;
 

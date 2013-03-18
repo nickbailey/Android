@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<game>
+    <level
+        initialScore="0"
+        minHandStep="15"
+        gamesPerRound="5"
+        gamesAveraged="5"
+        />
+</game>

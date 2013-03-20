@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import android.content.res.XmlResourceParser;
@@ -20,12 +23,14 @@ public class Game {
 	
 	/**
 	 * A class describing the parameters of one level in the game
+	 * Note that none of the fields in this class can be primitive
+	 * because their valueOf(String) method is called during initialisation
 	 */
 	private class LevelSpec {
-        public int initialScore  = -1;
-        public int minHandStep   = -1;
-        public int gamesPerRound = -1;
-        public int gamesAveraged = -1;
+        public Integer initialScore  = -1;
+        public Integer minHandStep   = -1;
+        public Integer gamesPerRound = -1;
+        public Integer gamesAveraged = -1;
         
         /**
          * Check that the current level parameters are valid
@@ -69,7 +74,7 @@ public class Game {
 	 */
 	private final ArrayList<LevelSpec> readLevels(XmlResourceParser xpp) {
 		ArrayList<LevelSpec> result = new ArrayList<LevelSpec>();
-		
+		final Class<LevelSpec> lsc = LevelSpec.class;
 		try {
 			System.out.println("Ready to read gamespec file");
 
@@ -90,13 +95,16 @@ public class Game {
 	                	for (Map.Entry<String, String> entry : attributes.entrySet()) {
 	                		final String key = entry.getKey();
 	                		final String val = entry.getValue();
-	                	    System.out.println(key + " => " + val);
-	                	    if (key.equals("initialScore")) ls.initialScore = Integer.valueOf(val);
-	                	    else if (key.equals("minHandStep")) ls.minHandStep = Integer.valueOf(val);
-	                	    else if (key.equals("gamesPerRound")) ls.gamesPerRound = Integer.valueOf(val);
-	                	    else if (key.equals("gamesAveraged")) ls.gamesAveraged = Integer.valueOf(val);
-	                	    else throw new Exception("Unknown attribute in level tag " +
-	                	    		(result.size()+1));
+	                	    System.out.println(key + " := " + val);
+	                	    final Field f = lsc.getField(key);
+	                	    final Class<?> ft = f.getType();
+	                	    System.out.println("field type is "+ft);
+	                	    if (f.get(ls) instanceof String) // If the target's a string...
+	                	    	f.set(ls, val);              // ...simply assign it.
+	                	    else {                           // Find the appropriate valueof(String) method
+	                	    	Method strParser = ft.getMethod("valueOf", new Class[]{String.class});
+	                	    	f.set(ls, strParser.invoke(f, val));
+	                	    }
 	                	}
 	                	if (!ls.isValid())
 	                		throw new Exception("Invialid level spec at tag " + (result.size()+1));

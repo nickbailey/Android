@@ -1,10 +1,9 @@
 package org.nism.tellthetime;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.res.XmlResourceParser;
+import android.os.Bundle;
 import android.view.Menu;
-import org.nism.tellthetime.AnalogClockFace;
 
 public class MainActivity extends Activity {
 

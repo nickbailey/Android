@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Tell the Time</string>
-    <string name="time_asked">A Quarter past\nTwelve</string>
     <string name="status">Game\nstarting</string>
     <string name="enter">Check!</string>
     <string name="menu_settings">Settings</string>

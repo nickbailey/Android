@@ -27,19 +27,18 @@
             android:id="@+id/time_text"
             android:layout_width="280dp"
             android:layout_height="80dp"
-            android:text="@string/time_asked"
             android:gravity="center_vertical|center_horizontal"
             android:textSize="32sp" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/enter_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/enter" />
 
         <TextView
-            android:id="@+id/editText1"
+            android:id="@+id/prompt_text"
             android:layout_width="fill_parent"
             android:layout_height="80dp"
             android:text="@string/status"

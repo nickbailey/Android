@@ -20,8 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.text.format.Time;
+//import android.text.format.Time;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RemoteViews.RemoteView;
@@ -47,9 +46,6 @@ public class AnalogClockFace extends View {
     private int mDialWidth;
     private int mDialHeight;
 
-    private boolean mAttached;
-
-    private final   Handler mHandler = new Handler();
     private State   mState = State.idle;
     private float   mMinutes;
     private float   mHour=1.0f;
@@ -83,9 +79,9 @@ public class AnalogClockFace extends View {
         mHourHandLength = r.getFraction(org.nism.tellthetime.R.fraction.clock_hour_hand_length,1,1);
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+    //@Override
+    //protected void onAttachedToWindow() {
+        //super.onAttachedToWindow();
 
 
         // NOTE: It's safe to do these after registering the receiver since the receiver always runs
@@ -95,8 +91,8 @@ public class AnalogClockFace extends View {
         //mCalendar = new Time();
 
         // Make sure we update to the current time
-        onTimeChanged();
-    }
+        //onTimeChanged();
+    //}
 
 	@Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -266,10 +262,13 @@ public class AnalogClockFace extends View {
     	}
     	return true;
     }
-    
-    private void onTimeChanged() {
 
-
+    /**
+     * Return the current time displayed
+     * 
+     * @return Number of minutes since 12:00
+     */
+    public int getTime() {
+    	return (int)(mHour*60.0f + 0.5f);
     }
-
 }

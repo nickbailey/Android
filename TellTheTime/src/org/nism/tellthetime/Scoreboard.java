@@ -24,10 +24,10 @@ public class Scoreboard extends View {
 	private static final int barWidth     = 20;    // Width of bars within bezel
 	private static final int margin       = 8;    // Margin to edge of view
 	
-	protected float mCurrentScore=20f;
-	protected float mAverageScore=10f;
-	protected float mMaxScore=20f;
-	protected int   mStars = 3;
+	public float mCurrentScore;
+	public float mAverageScore;
+	public float mMaxScore;
+	public int   mStars;
 	
 	private Paint mP = new Paint();
 	

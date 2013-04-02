@@ -2,6 +2,7 @@
 <game>
     <level
         initialScore="0"
+        timeQuantum="30"
         minHandStep="15"
         gamesPerRound="5"
         gamesAveraged="5"

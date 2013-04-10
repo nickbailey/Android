@@ -141,7 +141,7 @@ public class Scoreboard extends View {
         canvas.drawRect(cl-(rim+barWidth), top,
         		        cl-rim, bottom, mP);
         mP.setColor(mTextColor);
-        canvas.drawText(Integer.toString(Math.round(mAverageScore)),
+        canvas.drawText(String.format("%.01f", mAverageScore),
         		        cl-(rim+barWidth/2), top-2, mP);
 
         // Current score

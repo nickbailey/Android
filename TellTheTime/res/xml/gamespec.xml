@@ -6,12 +6,16 @@
         minHandStep="15"
         gamesPerRound="2"
         gamesAveraged="2"
+        promotionScore="1.8"
+        demotionScore="0.0"
         />
     <level
-        initialScore="0"
+        initialScore="1"
         timeQuantum="30"
         minHandStep="5"
         gamesPerRound="2"
         gamesAveraged="2"
+        promotionScore="1.8"
+        demotionScore="0.0"
         />
 </game>

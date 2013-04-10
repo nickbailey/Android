@@ -63,11 +63,13 @@ public final class Game {
 	 * because their valueOf(String) method is called during initialisation
 	 */
 	private class LevelSpec {
-        public Integer initialScore  = -1;
-        public Integer timeQuantum   = -1;
-        public Integer minHandStep   = -1;
-        public Integer gamesPerRound = -1;
-        public Integer gamesAveraged = -1;
+        public Integer initialScore   = -1;
+        public Integer timeQuantum    = -1;
+        public Integer minHandStep    = -1;
+        public Integer gamesPerRound  = -1;
+        public Integer gamesAveraged  = -1;
+        public Float   promotionScore = -1.0f;
+        public Float   demotionScore  = -1.0f;
         
         /**
          * Check that the current level parameters are valid
@@ -79,7 +81,10 @@ public final class Game {
         		   timeQuantum   <= 30  &&
         		   minHandStep   >= 1   &&
         		   gamesPerRound >= 1   &&
-        		   gamesAveraged >= 1;
+        		   gamesAveraged >= 1   &&
+        		   promotionScore > 0   &&
+        		   demotionScore >= 0   &&
+        		   promotionScore > demotionScore;
         }
 	}
 	
@@ -277,46 +282,50 @@ public final class Game {
 	 */
 	public void submit() {
 		final LevelSpec ls = levelSpecs.get(level);
-
 		final int timeSet = theClockFace.getTime();
-		System.out.println("Player entered "+timeSet+"; time is "+theTime);
+
+		String prompt = new String();
 		
 		if (timeSet == theTime) { // Player entered the correct time
 			theScoreboard.mCurrentScore += 1.0f;
-			thePromptText.setText("That's right!");
+			prompt = "That's right!";
 		} else {
 			// The wrong time was entered
-			thePromptText.setText("Oops! I wanted " +
-					timeToWords(theTime) + 
-					" not "+ timeToWords(timeSet));
+			prompt = "Oops! I wanted " + timeToWords(theTime) + 
+					 " not "+ timeToWords(timeSet) + ".";
 		}
-		
-		// The last change to thePromptText prevails.
-		
+				
 		question++;
 		if (question >= ls.gamesPerRound) { // End of this game: save result
 			roundScores.remove(0);
 			roundScores.add(ls.gamesPerRound-1, theScoreboard.mCurrentScore);
-			thePromptText.setText("New game!");
+			if (!prompt.equals("")) prompt += " ";
+			prompt += "New game!";
 			question = 0;
 			theScoreboard.mAverageScore = roundScores.getAverage(ls.gamesAveraged);
 			theScoreboard.mCurrentScore = 0.0f;
-		}
-		
-		if (roundScores.getAverage(ls.gamesAveraged) >= ls.gamesPerRound) {
-			level++;
-			if (level < levelSpecs.size())
-				thePromptText.setText("WELL DONE!\nOn to level " + level);
-			else { // Already at the highest level
+
+			// Check for a level change
+			float rs = roundScores.getAverage(ls.gamesAveraged);			
+			if (rs >= ls.promotionScore) {
+				level++;
+				if (level < levelSpecs.size())
+					prompt = "WELL DONE!\nOn to level " + (level+1);
+				else { // Already at the highest level
+					level--;
+					prompt = "BRILLIANT!\nThere are no more levels,\n" +
+							 "but play on if you wish.";
+				}
+				initLevel();
+			} else if (rs <= ls.demotionScore && level > 0) {
+				prompt = "This is too hard. Let's drop to level " + level;
 				level--;
-				thePromptText.setText("BRILLIANT!\nThere are no more levels,\n" +
-									  "but play on if you wish.");
+				initLevel();
 			}
-			initLevel();
 		}
 		
 		theTime = newRandomTime(ls.timeQuantum);
 		theTimeText.setText(timeToWords(theTime));
-
+		thePromptText.setText(prompt);
 	}
 }

@@ -269,6 +269,6 @@ public class AnalogClockFace extends View {
      * @return Number of minutes since 12:00
      */
     public int getTime() {
-    	return (int)(mHour*60.0f + 0.5f);
+    	return (int)(mHour*60.0f + 0.5f) % 720;
     }
 }

@@ -4,7 +4,14 @@
         initialScore="0"
         timeQuantum="30"
         minHandStep="15"
-        gamesPerRound="5"
-        gamesAveraged="5"
+        gamesPerRound="2"
+        gamesAveraged="2"
+        />
+    <level
+        initialScore="0"
+        timeQuantum="30"
+        minHandStep="5"
+        gamesPerRound="2"
+        gamesAveraged="2"
         />
 </game>

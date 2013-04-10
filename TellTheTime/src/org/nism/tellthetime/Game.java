@@ -21,7 +21,6 @@ import android.widget.TextView;
  *
  */
 public final class Game {
-	private int level;
 	private ArrayList<LevelSpec> levelSpecs;	// Properties of each game level
 	private RoundScores roundScores;			// Scores for the last rounds
 	private AnalogClockFace theClockFace;		// Clock Face for player input
@@ -29,6 +28,9 @@ public final class Game {
 	private TextView theTimeText;				// Text displaying the question
 	private TextView thePromptText;				// Text to encourage the player
 	private int theTime;						// Time in Minutes to display
+	
+	private int level;							// Current level
+	private int question;						// Question number in current level
 	
 	private Random rng = new Random();
 	
@@ -41,6 +43,17 @@ public final class Game {
 			// Capacity and size aren't the same!!
 			while (size() < newsize) add(null);
 			while (--newsize >= 0) set(newsize, val);
+		}
+		
+		/**
+		 * Average the first el elements
+		 * @param el The number of elements to average (starts at 0)
+		 * @return Average value
+		 */
+		float getAverage(int el) {
+			float sum = 0.0f;
+			for (int i=0; i<el; i++) sum += get(i);
+			return sum/size();
 		}
 	}
 	
@@ -209,12 +222,22 @@ public final class Game {
 		}
 	}
 	
+	/**
+	 * Make a new random time for the next question
+	 * 
+	 * @param tq Time Quantum. Time will be a multiple of tq mins after the hour
+	 * @return Random time in minutes after 00h00
+	 */
+	private int newRandomTime(int tq) {
+		final int minsteps = 60/tq;
+		return 60*rng.nextInt(12) + tq*rng.nextInt(minsteps);
+	}
+	
 	private void initLevel() {
 		final LevelSpec ls = levelSpecs.get(level);
 		
 		// Set a new time (in minutes) for the first game
-		int minsteps = 60/ls.timeQuantum;
-		theTime = 60*rng.nextInt(12) + ls.timeQuantum*rng.nextInt(minsteps);
+		theTime = newRandomTime(ls.timeQuantum);
 
 		// Remember the scores for this level
 		roundScores.setAll(ls.gamesAveraged, ls.initialScore);
@@ -229,8 +252,8 @@ public final class Game {
 		theScoreboard.mStars        = level+1;
 		
 		// Ask the question
+		question = 0;
 		theTimeText.setText(timeToWords(theTime));
-		thePromptText.setText("Move the hands\nthen press the button");
 	}
 	
 	public Game(XmlResourceParser xpp, Scoreboard sb, AnalogClockFace acf,
@@ -238,12 +261,13 @@ public final class Game {
 		roundScores = new RoundScores();
 		
 		levelSpecs = readLevels(xpp);
-		level = 0;
 		theScoreboard = sb;
 		theClockFace = acf;
 		theTimeText = tt;
 		thePromptText = pt;
-		
+
+		level = 0;
+		thePromptText.setText("Move the hands\nthen press the button");
 		initLevel();
 	}
 	
@@ -252,7 +276,47 @@ public final class Game {
 	 * Displays the result on the scoreboard.
 	 */
 	public void submit() {
-		int timeSet = theClockFace.getTime();
-		System.out.println("Player entered "+timeSet);
+		final LevelSpec ls = levelSpecs.get(level);
+
+		final int timeSet = theClockFace.getTime();
+		System.out.println("Player entered "+timeSet+"; time is "+theTime);
+		
+		if (timeSet == theTime) { // Player entered the correct time
+			theScoreboard.mCurrentScore += 1.0f;
+			thePromptText.setText("That's right!");
+		} else {
+			// The wrong time was entered
+			thePromptText.setText("Oops! I wanted " +
+					timeToWords(theTime) + 
+					" not "+ timeToWords(timeSet));
+		}
+		
+		// The last change to thePromptText prevails.
+		
+		question++;
+		if (question >= ls.gamesPerRound) { // End of this game: save result
+			roundScores.remove(0);
+			roundScores.add(ls.gamesPerRound-1, theScoreboard.mCurrentScore);
+			thePromptText.setText("New game!");
+			question = 0;
+			theScoreboard.mAverageScore = roundScores.getAverage(ls.gamesAveraged);
+			theScoreboard.mCurrentScore = 0.0f;
+		}
+		
+		if (roundScores.getAverage(ls.gamesAveraged) >= ls.gamesPerRound) {
+			level++;
+			if (level < levelSpecs.size())
+				thePromptText.setText("WELL DONE!\nOn to level " + level);
+			else { // Already at the highest level
+				level--;
+				thePromptText.setText("BRILLIANT!\nThere are no more levels,\n" +
+									  "but play on if you wish.");
+			}
+			initLevel();
+		}
+		
+		theTime = newRandomTime(ls.timeQuantum);
+		theTimeText.setText(timeToWords(theTime));
+
 	}
 }

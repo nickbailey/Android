@@ -27,6 +27,7 @@
             android:id="@+id/time_text"
             android:layout_width="280dp"
             android:layout_height="80dp"
+            android:layout_weight="0.35"
             android:gravity="center_vertical|center_horizontal"
             android:textSize="32sp" />
 
@@ -41,9 +42,10 @@
             android:id="@+id/prompt_text"
             android:layout_width="fill_parent"
             android:layout_height="80dp"
+            android:layout_weight="0.35"
+            android:gravity="center_vertical|center_horizontal"
             android:text="@string/status"
             android:textIsSelectable="false"
-            android:gravity="center_vertical|center_horizontal"
             android:textSize="20sp" />
         
     </LinearLayout>

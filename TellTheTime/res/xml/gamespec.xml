@@ -4,18 +4,63 @@
         initialScore="0"
         timeQuantum="30"
         minHandStep="15"
-        gamesPerRound="2"
-        gamesAveraged="2"
-        promotionScore="1.8"
+        gamesPerRound="4"
+        gamesAveraged="3"
+        promotionScore="3.8"
         demotionScore="0.0"
         />
     <level
         initialScore="1"
         timeQuantum="30"
         minHandStep="5"
-        gamesPerRound="2"
-        gamesAveraged="2"
-        promotionScore="1.8"
-        demotionScore="0.0"
+        gamesPerRound="4"
+        gamesAveraged="4"
+        promotionScore="3.8"
+        demotionScore="0.8"
+        />
+    <level
+        initialScore="1"
+        timeQuantum="15"
+        minHandStep="5"
+        gamesPerRound="5"
+        gamesAveraged="6"
+        promotionScore="4.9"
+        demotionScore="0.8"
+        />
+    <level
+        initialScore="1"
+        timeQuantum="5"
+        minHandStep="5"
+        gamesPerRound="5"
+        gamesAveraged="6"
+        promotionScore="4.9"
+        demotionScore="0.8"
+        />
+    <level
+        initialScore="1"
+        timeQuantum="5"
+        minHandStep="1"
+        gamesPerRound="5"
+        gamesAveraged="6"
+        promotionScore="4.9"
+        demotionScore="0.8"
+        />
+    <level
+        initialScore="1"
+        timeQuantum="1"
+        minHandStep="1"
+        gamesPerRound="4"
+        gamesAveraged="4"
+        promotionScore="3.8"
+        demotionScore="0.8"
+        />
+    <level
+        initialScore="1"
+        timeQuantum="1"
+        minHandStep="1"
+        gamesPerRound="10"
+        gamesAveraged="10"
+        promotionScore="9.95"
+        demotionScore="0.8"
         />
 </game>

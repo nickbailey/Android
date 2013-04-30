@@ -298,7 +298,7 @@ public final class Game {
 		question++;
 		if (question >= ls.gamesPerRound) { // End of this game: save result
 			roundScores.remove(0);
-			roundScores.add(ls.gamesPerRound-1, theScoreboard.mCurrentScore);
+			roundScores.add(theScoreboard.mCurrentScore);
 			if (!prompt.equals("")) prompt += " ";
 			prompt += "New game!";
 			question = 0;

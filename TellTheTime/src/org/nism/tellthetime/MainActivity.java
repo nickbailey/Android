@@ -1,6 +1,7 @@
 package org.nism.tellthetime;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.view.Menu;
@@ -53,5 +54,32 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		game.submit();
 		sb.invalidate();
+	}
+	
+	/**
+	 * Save and restore game state when paused
+	 */
+	@Override
+	public void onPause() {
+		super.onPause();
+		SharedPreferences.Editor pe = getPreferences(MODE_PRIVATE).edit();
+		pe.putInt("GameLevel", game.getLevel());
+		pe.putInt("GameQuestion", game.getQuestion());
+		pe.putInt("GameTime", game.getTime());
+		pe.putFloat("GameAvScore", game.getAverageScore());
+		pe.putFloat("GameCurrentScore", game.getCurrentScore());
+		
+		pe.apply();
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+ 		SharedPreferences p = getPreferences(MODE_PRIVATE);
+		game.restoreState(p.getInt("GameLevel", 0),
+						  p.getInt("GameQuestion", 0),
+						  p.getInt("GameTime", 0),
+						  p.getFloat("GameAvScore", 0f),
+						  p.getFloat("GameCurrentScore", 0f));
 	}
 }

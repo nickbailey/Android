@@ -29,8 +29,8 @@ public final class Game {
 	private TextView thePromptText;				// Text to encourage the player
 	private int theTime;						// Time in Minutes to display
 	
-	private int level;							// Current level
-	private int question;						// Question number in current level
+	public int level;							// Current level
+	public int question;						// Question number in current level
 	
 	private Random rng = new Random();
 	
@@ -238,7 +238,13 @@ public final class Game {
 		return 60*rng.nextInt(12) + tq*rng.nextInt(minsteps);
 	}
 	
+	// REFACTORING NOTE:
+	// With more careful design, this could probably have most of its functionality
+	// combined with onRestore, but providing suitable default values in Game
+	// (perhaps with some getInitialCurrentScore() methods and the like).
+	// As it is. much of it is rehearsed in doRestore at the bottom of the class.
 	private void initLevel() {
+		System.out.println("INITLEVEL");
 		final LevelSpec ls = levelSpecs.get(level);
 		
 		// Set a new time (in minutes) for the first game
@@ -273,7 +279,7 @@ public final class Game {
 
 		level = 0;
 		thePromptText.setText("Move the hands\nthen press the button");
-		initLevel();
+		//initLevel(); Gets called by onRestore()
 	}
 	
 	/**
@@ -327,5 +333,37 @@ public final class Game {
 		theTime = newRandomTime(ls.timeQuantum);
 		theTimeText.setText(timeToWords(theTime));
 		thePromptText.setText(prompt);
+	}
+	
+	/***
+	 * Utility classes to methods and restore game state
+	 */
+	public int getLevel() { return level; }
+	public int getQuestion() { return question; }
+	public int getTime() { return theTime; }
+	public float getAverageScore() { return theScoreboard.mAverageScore; }
+	public float getCurrentScore() { return theScoreboard.mCurrentScore; }
+	
+	public void restoreState(int level, int question,
+			                 int time,
+			                 float averageScore, float currentScore) {
+		System.out.println("RESTORE");
+		this.level = level;
+		this.question = question;
+		this.theTime = time;
+
+		final LevelSpec ls = levelSpecs.get(level);
+		// Check whether there's an average score to set
+		// If not, use the level's initial score.
+		final float avScore = averageScore >= 0 ? averageScore : ls.initialScore;
+		
+		theScoreboard.mCurrentScore = currentScore;
+		theScoreboard.mStars        = level+1;
+		theScoreboard.mAverageScore = avScore;
+		theScoreboard.mMaxScore     = ls.gamesPerRound;
+		theClockFace.mQuantum		= ls.minHandStep;		
+		theTimeText.setText(timeToWords(theTime));
+
+		roundScores.setAll(ls.gamesAveraged, avScore);
 	}
 }

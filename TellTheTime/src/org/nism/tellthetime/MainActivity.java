@@ -78,8 +78,8 @@ public class MainActivity extends Activity implements OnClickListener {
  		SharedPreferences p = getPreferences(MODE_PRIVATE);
 		game.restoreState(p.getInt("GameLevel", 0),
 						  p.getInt("GameQuestion", 0),
-						  p.getInt("GameTime", 0),
-						  p.getFloat("GameAvScore", 0f),
-						  p.getFloat("GameCurrentScore", 0f));
+						  p.getInt("GameTime", -1),
+						  p.getFloat("GameAvScore", game.getInitAverageScore()),
+						  p.getFloat("GameCurrentScore", game.getInitScore()));
 	}
 }

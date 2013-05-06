@@ -238,33 +238,51 @@ public final class Game {
 		return 60*rng.nextInt(12) + tq*rng.nextInt(minsteps);
 	}
 	
-	// REFACTORING NOTE:
-	// With more careful design, this could probably have most of its functionality
-	// combined with onRestore, but providing suitable default values in Game
-	// (perhaps with some getInitialCurrentScore() methods and the like).
-	// As it is. much of it is rehearsed in doRestore at the bottom of the class.
 	private void initLevel() {
-		System.out.println("INITLEVEL");
-		final LevelSpec ls = levelSpecs.get(level);
+		//System.out.println("INITLEVEL");
 		
 		// Set a new time (in minutes) for the first game
+		final LevelSpec ls = levelSpecs.get(level);
 		theTime = newRandomTime(ls.timeQuantum);
-
+		setUIComponents(0f, ls.initialScore, level);
 		// Remember the scores for this level
-		roundScores.setAll(ls.gamesAveraged, ls.initialScore);
+		//roundScores.setAll(ls.gamesAveraged, ls.initialScore);
 		
 		// Set up skill-appropriate clock face behaviour
-		theClockFace.mQuantum = ls.minHandStep;
+		//theClockFace.mQuantum = ls.minHandStep;
 		
 		// Set up scoreboard data (our owning activity will cause a redraw)
-		theScoreboard.mCurrentScore = 0;
-		theScoreboard.mAverageScore = ls.initialScore;
-		theScoreboard.mMaxScore     = ls.gamesPerRound;
-		theScoreboard.mStars        = level+1;
+		//theScoreboard.mCurrentScore = 0;
+		//theScoreboard.mAverageScore = ls.initialScore;
+		//theScoreboard.mMaxScore     = ls.gamesPerRound;
+		//theScoreboard.mStars        = level+1;
 		
 		// Ask the question
 		question = 0;
+		//theTimeText.setText(timeToWords(theTime));
+	}
+	
+	/**
+	 * Make all UI components have state consistent with the game.
+	 * This is called to restore state as well from initLevel()
+	 *
+	 * @param currentScore The desired game score to display
+	 * @param avScore The average score this round (services running average calcs)
+	 * @param level The current game level
+	 */
+	private void setUIComponents(float currentScore, float avScore, int level) {
+		final LevelSpec ls = levelSpecs.get(level);
+
+		// Set up score board data (our owning activity will cause a redraw)
+		roundScores.setAll(ls.gamesAveraged, avScore);
+		theScoreboard.mCurrentScore = currentScore;
+		theScoreboard.mAverageScore = avScore;
+		theScoreboard.mMaxScore     = ls.gamesPerRound;
+		theScoreboard.mStars        = level+1;
+
+		// Set up skill-appropriate clock face behaviour
 		theTimeText.setText(timeToWords(theTime));
+		theClockFace.mQuantum = ls.minHandStep;
 	}
 	
 	public Game(XmlResourceParser xpp, Scoreboard sb, AnalogClockFace acf,
@@ -279,7 +297,6 @@ public final class Game {
 
 		level = 0;
 		thePromptText.setText("Move the hands\nthen press the button");
-		//initLevel(); Gets called by onRestore()
 	}
 	
 	/**
@@ -335,9 +352,11 @@ public final class Game {
 		thePromptText.setText(prompt);
 	}
 	
-	/***
-	 * Utility classes to methods and restore game state
-	 */
+	//
+	// Utility methods to intialise, save and restore game state
+	//
+	public int getInitAverageScore() { return levelSpecs.get(0).initialScore; }
+	public int getInitScore() { return levelSpecs.get(0).initialScore; }
 	public int getLevel() { return level; }
 	public int getQuestion() { return question; }
 	public int getTime() { return theTime; }
@@ -347,23 +366,11 @@ public final class Game {
 	public void restoreState(int level, int question,
 			                 int time,
 			                 float averageScore, float currentScore) {
-		System.out.println("RESTORE");
 		this.level = level;
 		this.question = question;
-		this.theTime = time;
+		this.theTime = time>=0 ? time : newRandomTime(levelSpecs.get(level).timeQuantum);
 
-		final LevelSpec ls = levelSpecs.get(level);
-		// Check whether there's an average score to set
-		// If not, use the level's initial score.
-		final float avScore = averageScore >= 0 ? averageScore : ls.initialScore;
-		
-		theScoreboard.mCurrentScore = currentScore;
-		theScoreboard.mStars        = level+1;
-		theScoreboard.mAverageScore = avScore;
-		theScoreboard.mMaxScore     = ls.gamesPerRound;
-		theClockFace.mQuantum		= ls.minHandStep;		
-		theTimeText.setText(timeToWords(theTime));
 
-		roundScores.setAll(ls.gamesAveraged, avScore);
+		setUIComponents(currentScore, averageScore, level);
 	}
 }

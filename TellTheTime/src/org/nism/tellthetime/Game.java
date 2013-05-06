@@ -244,22 +244,8 @@ public final class Game {
 		// Set a new time (in minutes) for the first game
 		final LevelSpec ls = levelSpecs.get(level);
 		theTime = newRandomTime(ls.timeQuantum);
-		setUIComponents(0f, ls.initialScore, level);
-		// Remember the scores for this level
-		//roundScores.setAll(ls.gamesAveraged, ls.initialScore);
-		
-		// Set up skill-appropriate clock face behaviour
-		//theClockFace.mQuantum = ls.minHandStep;
-		
-		// Set up scoreboard data (our owning activity will cause a redraw)
-		//theScoreboard.mCurrentScore = 0;
-		//theScoreboard.mAverageScore = ls.initialScore;
-		//theScoreboard.mMaxScore     = ls.gamesPerRound;
-		//theScoreboard.mStars        = level+1;
-		
-		// Ask the question
 		question = 0;
-		//theTimeText.setText(timeToWords(theTime));
+		setUIComponents(0f, ls.initialScore, level);
 	}
 	
 	/**
@@ -369,7 +355,6 @@ public final class Game {
 		this.level = level;
 		this.question = question;
 		this.theTime = time>=0 ? time : newRandomTime(levelSpecs.get(level).timeQuantum);
-
 
 		setUIComponents(currentScore, averageScore, level);
 	}

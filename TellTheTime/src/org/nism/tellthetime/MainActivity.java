@@ -16,6 +16,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Scoreboard sb;
 	private TextView tt, pt;
 	private Game game;
+	private Announcer sp;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +41,11 @@ public class MainActivity extends Activity implements OnClickListener {
     	sb = (Scoreboard)findViewById(org.nism.tellthetime.R.id.scoreboard);
     	tt = (TextView)findViewById(org.nism.tellthetime.R.id.time_text);
     	pt = (TextView)findViewById(org.nism.tellthetime.R.id.prompt_text);
+    	sp = new Announcer(this);
     	
         XmlResourceParser xml = this.getResources().getXml(org.nism.tellthetime.R.xml.gamespec);
 
-        game = new Game(xml, sb, acf, tt, pt);
+        game = new Game(xml, sb, acf, tt, pt, sp);
         sb.invalidate();
     }
 
@@ -81,5 +83,12 @@ public class MainActivity extends Activity implements OnClickListener {
 						  p.getInt("GameTime", -1),
 						  p.getFloat("GameAvScore", game.getInitAverageScore()),
 						  p.getFloat("GameCurrentScore", game.getInitScore()));
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// Just call the speech engine's closedown method
+		sp.onDestroy();
 	}
 }

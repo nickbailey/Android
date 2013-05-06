@@ -28,6 +28,7 @@ public final class Game {
 	private TextView theTimeText;				// Text displaying the question
 	private TextView thePromptText;				// Text to encourage the player
 	private int theTime;						// Time in Minutes to display
+	private Announcer theAnnouncer;				// Speech engine
 	
 	public int level;							// Current level
 	public int question;						// Question number in current level
@@ -267,12 +268,14 @@ public final class Game {
 		theScoreboard.mStars        = level+1;
 
 		// Set up skill-appropriate clock face behaviour
-		theTimeText.setText(timeToWords(theTime));
+		String tt = timeToWords(theTime);
+		theAnnouncer.say("show me "+tt);
+		theTimeText.setText(tt);
 		theClockFace.mQuantum = ls.minHandStep;
 	}
 	
 	public Game(XmlResourceParser xpp, Scoreboard sb, AnalogClockFace acf,
-			    TextView tt, TextView pt) {
+			    TextView tt, TextView pt, Announcer sp) {
 		roundScores = new RoundScores();
 		
 		levelSpecs = readLevels(xpp);
@@ -280,6 +283,7 @@ public final class Game {
 		theClockFace = acf;
 		theTimeText = tt;
 		thePromptText = pt;
+		theAnnouncer = sp;
 
 		level = 0;
 		thePromptText.setText("Move the hands\nthen press the button");
@@ -300,8 +304,8 @@ public final class Game {
 			prompt = "That's right!";
 		} else {
 			// The wrong time was entered
-			prompt = "Oops! I wanted " + timeToWords(theTime) + 
-					 " not "+ timeToWords(timeSet) + ".";
+			prompt = "Oh no! I wanted " + timeToWords(theTime) + 
+					 ", not "+ timeToWords(timeSet) + ".";
 		}
 				
 		question++;
@@ -334,8 +338,11 @@ public final class Game {
 		}
 		
 		theTime = newRandomTime(ls.timeQuantum);
-		theTimeText.setText(timeToWords(theTime));
+		theAnnouncer.say(prompt);
 		thePromptText.setText(prompt);
+		String tt = timeToWords(theTime);
+		theAnnouncer.say("show me "+tt);
+		theTimeText.setText(tt);
 	}
 	
 	//

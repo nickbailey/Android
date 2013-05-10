@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		pe.putInt("GameLevel", game.getLevel());
 		pe.putInt("GameQuestion", game.getQuestion());
 		pe.putInt("GameTime", game.getTime());
+		pe.putInt("GameAttempts", game.getAttempts());
 		pe.putFloat("GameAvScore", game.getAverageScore());
 		pe.putFloat("GameCurrentScore", game.getCurrentScore());
 		
@@ -81,6 +82,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		game.restoreState(p.getInt("GameLevel", 0),
 						  p.getInt("GameQuestion", 0),
 						  p.getInt("GameTime", -1),
+						  p.getInt("GameAttempts", 0),
 						  p.getFloat("GameAvScore", game.getInitAverageScore()),
 						  p.getFloat("GameCurrentScore", game.getInitScore()));
 	}

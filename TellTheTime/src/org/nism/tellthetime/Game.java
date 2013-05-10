@@ -30,8 +30,9 @@ public final class Game {
 	private int theTime;						// Time in Minutes to display
 	private Announcer theAnnouncer;				// Speech engine
 	
-	public int level;							// Current level
-	public int question;						// Question number in current level
+	private int level;							// Current level
+	private int question;						// Question number in current level
+	private int attempts;						// Attempts at current question
 	
 	private Random rng = new Random();
 	
@@ -64,27 +65,29 @@ public final class Game {
 	 * because their valueOf(String) method is called during initialisation
 	 */
 	private class LevelSpec {
-        public Integer initialScore   = -1;
-        public Integer timeQuantum    = -1;
-        public Integer minHandStep    = -1;
-        public Integer gamesPerRound  = -1;
-        public Integer gamesAveraged  = -1;
-        public Float   promotionScore = -1.0f;
-        public Float   demotionScore  = -1.0f;
+        public Integer initialScore        = -1;
+        public Integer timeQuantum         = -1;
+        public Integer minHandStep         = -1;
+        public Integer attemptsPerQuestion = -1;
+        public Integer gamesPerRound       = -1;
+        public Integer gamesAveraged       = -1;
+        public Float   promotionScore      = -1.0f;
+        public Float   demotionScore       = -1.0f;
         
         /**
          * Check that the current level parameters are valid
          * @return true if a level can be played
          */
         public boolean isValid() {
-        	return initialScore  >= 0   &&
-        		   timeQuantum   >= 1   &&
-        		   timeQuantum   <= 30  &&
-        		   minHandStep   >= 1   &&
-        		   gamesPerRound >= 1   &&
-        		   gamesAveraged >= 1   &&
-        		   promotionScore > 0   &&
-        		   demotionScore >= 0   &&
+        	return initialScore        >= 0   &&
+        		   timeQuantum         >= 1   &&
+        		   timeQuantum         <= 30  &&
+        		   minHandStep         >= 1   &&
+        		   attemptsPerQuestion >= 1   &&
+        		   gamesPerRound       >= 1   &&
+        		   gamesAveraged       >= 1   &&
+        		   promotionScore      >  0   &&
+        		   demotionScore       >= 0   &&
         		   promotionScore > demotionScore;
         }
 	}
@@ -96,7 +99,7 @@ public final class Game {
 	 * @return Map of name, value pairs for each attribute
 	 * @throws Exception
 	 */
-	private Map<String,String>  getAttributes(XmlPullParser parser) throws Exception {
+	private Map<String,String> getAttributes(XmlPullParser parser) throws Exception {
 	    Map<String,String> attrs=null;
 	    int acount=parser.getAttributeCount();
 	    if(acount != -1) {
@@ -236,7 +239,11 @@ public final class Game {
 	 */
 	private int newRandomTime(int tq) {
 		final int minsteps = 60/tq;
-		return 60*rng.nextInt(12) + tq*rng.nextInt(minsteps);
+		int newTime;
+		do {
+			newTime = 60*rng.nextInt(12) + tq*rng.nextInt(minsteps);
+		} while (newTime == theTime);
+		return newTime;
 	}
 	
 	private void initLevel() {
@@ -268,9 +275,7 @@ public final class Game {
 		theScoreboard.mStars        = level+1;
 
 		// Set up skill-appropriate clock face behaviour
-		String tt = timeToWords(theTime);
-		theAnnouncer.say("show me "+tt);
-		theTimeText.setText(tt);
+		theTimeText.setText(timeToWords(theTime));
 		theClockFace.mQuantum = ls.minHandStep;
 	}
 	
@@ -286,6 +291,7 @@ public final class Game {
 		theAnnouncer = sp;
 
 		level = 0;
+		sp.say("Let's tell the time");
 		thePromptText.setText("Move the hands\nthen press the button");
 	}
 	
@@ -302,42 +308,60 @@ public final class Game {
 		if (timeSet == theTime) { // Player entered the correct time
 			theScoreboard.mCurrentScore += 1.0f;
 			prompt = "That's right!";
-		} else {
-			// The wrong time was entered
-			prompt = "Oh no! I wanted " + timeToWords(theTime) + 
-					 ", not "+ timeToWords(timeSet) + ".";
-		}
-				
-		question++;
-		if (question >= ls.gamesPerRound) { // End of this game: save result
-			roundScores.remove(0);
-			roundScores.add(theScoreboard.mCurrentScore);
-			if (!prompt.equals("")) prompt += " ";
-			prompt += "New game!";
-			question = 0;
-			theScoreboard.mAverageScore = roundScores.getAverage(ls.gamesAveraged);
-			theScoreboard.mCurrentScore = 0.0f;
 
-			// Check for a level change
-			float rs = roundScores.getAverage(ls.gamesAveraged);			
-			if (rs >= ls.promotionScore) {
-				level++;
-				if (level < levelSpecs.size())
-					prompt = "WELL DONE!\nOn to level " + (level+1);
-				else { // Already at the highest level
-					level--;
-					prompt = "BRILLIANT!\nThere are no more levels,\n" +
-							 "but play on if you wish.";
+			question++;
+
+			if (question >= ls.gamesPerRound) { // End of this game: save result
+				roundScores.remove(0);
+				roundScores.add(theScoreboard.mCurrentScore);
+				if (!prompt.equals("")) prompt += " ";
+					prompt += "New game!";
+					question = 0;
+					theScoreboard.mAverageScore = 
+							roundScores.getAverage(ls.gamesAveraged);
+					theScoreboard.mCurrentScore = 0.0f;
+
+					// Check for a level change
+					float rs = roundScores.getAverage(ls.gamesAveraged);			
+					if (rs >= ls.promotionScore) {
+						level++;
+						if (level < levelSpecs.size())
+							prompt = "WELL DONE!\nOn to level " + (level+1);
+						else { // Already at the highest level
+							level--;
+							prompt = "BRILLIANT!\nThere are no more levels,\n" +
+									 "but play on if you wish.";
+						}
+						initLevel();
+					} else if (rs <= ls.demotionScore && level > 0) {
+						prompt = "This is too hard. Let's drop to level " + level;
+						level--;
+						initLevel();
+					}
 				}
-				initLevel();
-			} else if (rs <= ls.demotionScore && level > 0) {
-				prompt = "This is too hard. Let's drop to level " + level;
-				level--;
-				initLevel();
+			
+				theTime = newRandomTime(ls.timeQuantum);
+				
+		} else { // The wrong time was entered
+			prompt = "Oh no! I wanted " + timeToWords(theTime).toLowerCase() + 
+					 ", not "+ timeToWords(timeSet).toLowerCase() + ".";
+			// Handle multiple attempts if this level permits it.
+			attempts++;
+			if (attempts < ls.attemptsPerQuestion) {
+				// Player may re-attempt the same question
+				if (attempts < ls.attemptsPerQuestion - 1)
+					prompt += "\nTry again.";
+				else
+					prompt += "\nOne last try.";
+			} else {
+				// No more attempts permitted.
+				prompt += "\nLet's move on.";
+				attempts = 0;
+				theTime = newRandomTime(ls.timeQuantum);
+				question++;
 			}
 		}
-		
-		theTime = newRandomTime(ls.timeQuantum);
+				
 		theAnnouncer.say(prompt);
 		thePromptText.setText(prompt);
 		String tt = timeToWords(theTime);
@@ -352,17 +376,20 @@ public final class Game {
 	public int getInitScore() { return levelSpecs.get(0).initialScore; }
 	public int getLevel() { return level; }
 	public int getQuestion() { return question; }
+	public int getAttempts() { return attempts; }
 	public int getTime() { return theTime; }
 	public float getAverageScore() { return theScoreboard.mAverageScore; }
 	public float getCurrentScore() { return theScoreboard.mCurrentScore; }
 	
 	public void restoreState(int level, int question,
-			                 int time,
+			                 int time, int attempts,
 			                 float averageScore, float currentScore) {
 		this.level = level;
 		this.question = question;
+		this.attempts = attempts;
 		this.theTime = time>=0 ? time : newRandomTime(levelSpecs.get(level).timeQuantum);
 
 		setUIComponents(currentScore, averageScore, level);
+		theAnnouncer.say("show me "+timeToWords(theTime));
 	}
 }

@@ -3,7 +3,7 @@
 
     <string name="app_name">Tell the Time</string>
     <string name="status">Game\nstarting</string>
-    <string name="enter">Check!</string>
+    <string name="enter">Check Time</string>
     <string name="menu_settings">Settings</string>
 
 </resources>

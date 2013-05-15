@@ -37,8 +37,8 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onStart() {
     	super.onStart();
     	
-        acf = (AnalogClockFace) findViewById(org.nism.tellthetime.R.id.clock_face);    	    	
     	sb = (Scoreboard)findViewById(org.nism.tellthetime.R.id.scoreboard);
+        acf = (AnalogClockFace)findViewById(org.nism.tellthetime.R.id.clock_face);    	    	
     	tt = (TextView)findViewById(org.nism.tellthetime.R.id.time_text);
     	pt = (TextView)findViewById(org.nism.tellthetime.R.id.prompt_text);
     	sp = new Announcer(this);

@@ -29,6 +29,10 @@ public class Announcer implements TextToSpeech.OnInitListener {
 		tts.speak(text, TextToSpeech.QUEUE_ADD, null);
 	}
 	
+	public void flush() {
+		tts.speak("", TextToSpeech.QUEUE_FLUSH, null);
+	}
+	
 	public void onDestroy() {
 		tts.shutdown();
 	}

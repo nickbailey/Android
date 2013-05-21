@@ -54,8 +54,9 @@ public class MainActivity extends Activity implements OnClickListener {
      */
 	@Override
 	public void onClick(View v) {
-		game.submit();
-		sb.invalidate();
+		sp.flush();			// Stop speech output
+		game.submit();		// Do game logic
+		sb.invalidate();	// Force scoreboard redraw
 	}
 	
 	/**

@@ -277,6 +277,7 @@ public final class Game {
 		// Set up skill-appropriate clock face behaviour
 		theTimeText.setText(timeToWords(theTime));
 		theClockFace.mQuantum = ls.minHandStep;
+		theClockFace.setTime(theTime);
 	}
 	
 	public Game(XmlResourceParser xpp, Scoreboard sb, AnalogClockFace acf,

@@ -271,4 +271,9 @@ public class AnalogClockFace extends View {
     public int getTime() {
     	return (int)(mHour*60.0f + 0.5f) % 720;
     }
+    
+    public void setTime(int time) {
+    	mHour = time/60f;
+    	mMinutes = time % 60;
+    }
 }

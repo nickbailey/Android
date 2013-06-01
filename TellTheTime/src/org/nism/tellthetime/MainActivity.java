@@ -1,6 +1,9 @@
 package org.nism.tellthetime;
 
+import org.nism.tellthetime.SetLevelDialogueFragment.SetLevelListener;
+
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
@@ -11,7 +14,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity
+                          implements OnClickListener,
+                                     SetLevelListener {
 
 	private AnalogClockFace acf;
 	private Scoreboard sb;
@@ -39,7 +44,8 @@ public class MainActivity extends Activity implements OnClickListener {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.go_to_level:
-                //newGame();
+                SetLevelDialogueFragment sld = new SetLevelDialogueFragment();
+                sld.show(getFragmentManager(), "set_level_dialogue");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -70,6 +76,14 @@ public class MainActivity extends Activity implements OnClickListener {
 		sp.flush();			// Stop speech output
 		game.submit();		// Do game logic
 		sb.invalidate();	// Force scoreboard redraw
+	}
+
+	/**
+	 * Catch Set Level requests from the dialogue
+	 */
+	public void setLevel(int level) {
+		// TODO Auto-generated method stub
+		System.out.println("New level "+level);
 	}
 	
 	/**

@@ -3,7 +3,6 @@ package org.nism.tellthetime;
 import org.nism.tellthetime.SetLevelDialogueFragment.SetLevelListener;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
@@ -45,6 +44,7 @@ public class MainActivity extends Activity
         switch (item.getItemId()) {
             case R.id.go_to_level:
                 SetLevelDialogueFragment sld = new SetLevelDialogueFragment();
+                sld.setMaxLevel(1, game.getMaxlevel());
                 sld.show(getFragmentManager(), "set_level_dialogue");
                 return true;
             default:
@@ -73,17 +73,17 @@ public class MainActivity extends Activity
      */
 	@Override
 	public void onClick(View v) {
-		sp.flush();			// Stop speech output
-		game.submit();		// Do game logic
-		sb.invalidate();	// Force scoreboard redraw
+		sp.flush();				// Stop speech output
+		game.submit();			// Do game logic
+		sb.invalidate();		// Force scoreboard redraw
 	}
 
 	/**
 	 * Catch Set Level requests from the dialogue
 	 */
 	public void setLevel(int level) {
-		// TODO Auto-generated method stub
-		System.out.println("New level "+level);
+		game.setLevel(level);	// Change game state
+		sb.invalidate();		// Force redraw
 	}
 	
 	/**

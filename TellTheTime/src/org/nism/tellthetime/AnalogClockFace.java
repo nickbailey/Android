@@ -247,10 +247,12 @@ public class AnalogClockFace extends View {
     			// Maybe the minute hand passed the hour...
     			if (prev_mins > 44f && mMinutes < 16f) { // forwards...
     				mHour += 1f;
+    				if (mHour > 12f) mHour = 1f;
     		    	//System.out.println("Incr hr: mins was "+Float.toString(prev_mins)+" now "+Float.toString(mMinutes));
     			}    				
     			if (prev_mins < 16f && mMinutes > 44f) { // ...or backwards
     				mHour -= 1f;
+    				if (mHour < 1f) mHour = 12f;
     		    	//System.out.println("Decr hr: mins was "+Float.toString(prev_mins)+" now "+Float.toString(mMinutes));
     			}
     			mChanged = true;

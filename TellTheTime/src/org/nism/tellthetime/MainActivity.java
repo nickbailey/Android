@@ -44,7 +44,7 @@ public class MainActivity extends Activity
         switch (item.getItemId()) {
             case R.id.go_to_level:
                 SetLevelDialogueFragment sld = new SetLevelDialogueFragment();
-                sld.setMaxLevel(1, game.getMaxlevel());
+                sld.setLevels(1, game.getMaxlevel());
                 sld.show(getFragmentManager(), "set_level_dialogue");
                 return true;
             default:

@@ -31,11 +31,7 @@ public class SetLevelDialogueFragment extends DialogFragment {
     private int maxLevel;
     private int minLevel;
     
-    public SetLevelDialogueFragment() {
-    	super();
-    }
-    
-    public void setMaxLevel(int min, int max) {
+    public void setLevels(int min, int max) {
     	minLevel = min;
     	maxLevel = max;
     }

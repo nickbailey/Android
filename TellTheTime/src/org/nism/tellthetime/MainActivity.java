@@ -3,9 +3,12 @@ package org.nism.tellthetime;
 import org.nism.tellthetime.SetLevelDialogueFragment.SetLevelListener;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +18,8 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity
                           implements OnClickListener,
-                                     SetLevelListener {
+                                     SetLevelListener,
+                                     OnSharedPreferenceChangeListener {
 
 	private AnalogClockFace acf;
 	private Scoreboard sb;
@@ -42,6 +46,10 @@ public class MainActivity extends Activity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+        	case R.id.menu_settings:
+        	    // Launch Preference activity
+        	    startActivity(new Intent(this, ShowSettingsActivity.class));
+        	    return true;
             case R.id.go_to_level:
                 SetLevelDialogueFragment sld = new SetLevelDialogueFragment();
                 sld.setLevels(1, game.getMaxlevel());
@@ -65,6 +73,8 @@ public class MainActivity extends Activity
         XmlResourceParser xml = this.getResources().getXml(org.nism.tellthetime.R.xml.gamespec);
 
         game = new Game(xml, sb, acf, tt, pt, sp);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                         .registerOnSharedPreferenceChangeListener(this);
         sb.invalidate();
     }
 
@@ -113,6 +123,11 @@ public class MainActivity extends Activity
 						  p.getInt("GameAttempts", 0),
 						  p.getFloat("GameAvScore", game.getInitAverageScore()),
 						  p.getFloat("GameCurrentScore", game.getInitScore()));
+		
+		// Also serves to initialise the active property
+		sp.active =
+			PreferenceManager.getDefaultSharedPreferences(this)
+			                 .getBoolean("announce_preference", true);
 	}
 	
 	@Override
@@ -120,5 +135,11 @@ public class MainActivity extends Activity
 		super.onDestroy();
 		// Just call the speech engine's closedown method
 		sp.onDestroy();
+	}
+	
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			                              String key) {
+		if (key.equals("announce_preference"))
+			sp.active = sharedPreferences.getBoolean(key, false);
 	}
 }

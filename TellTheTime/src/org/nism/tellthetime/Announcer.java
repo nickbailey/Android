@@ -6,6 +6,7 @@ import android.speech.tts.TextToSpeech;
 import android.content.Context;
 
 public class Announcer implements TextToSpeech.OnInitListener {
+	public boolean active;
 	private TextToSpeech tts;
 	
 	Announcer(Context context) {
@@ -26,7 +27,8 @@ public class Announcer implements TextToSpeech.OnInitListener {
 	}
 		
 	public void say(String text) {
-		tts.speak(text, TextToSpeech.QUEUE_ADD, null);
+		if (active)
+			tts.speak(text, TextToSpeech.QUEUE_ADD, null);
 	}
 	
 	public void flush() {

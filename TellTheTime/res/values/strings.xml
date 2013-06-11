@@ -9,5 +9,6 @@
     <string name="dialogue_set_level">Jump to a new level</string>
     <string name="dialogue_level_OK">Run level</string>
     <string name="dialogue_level_cancel">Cancel</string>
+    <string name="announce_preference">Audio Announcements</string>
 
 </resources>
